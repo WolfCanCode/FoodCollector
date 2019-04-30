@@ -25,7 +25,7 @@ class App extends Component {
                 <ul>
                   <li><Link to={"/menu/today"}>Menu today</Link></li>
                   <li><Link to={"/menus"}>Menu in the past</Link></li>
-
+              
                 </ul>
               </div>
             )}
