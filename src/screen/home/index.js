@@ -56,11 +56,6 @@ class homePageScreen extends Component {
       name: this.state.name,
       nickName: this.state.nickName,
       status: this.state.status,
-      manager:{
-          name:"hihi",
-          nickName:"haha",
-          status:"alalaa"
-      }
     };
     db.collection("users")
       .add(user)

@@ -7,6 +7,8 @@ import { Header, Icon } from "semantic-ui-react";
 import { Button } from 'semantic-ui-react'
 
 import homePageScreen from "./screen/home";
+import menuScreen from './screen/menu/index';
+import menuDetailScreen from './screen/menu/details';
 
 const mapStateToProps = state => ({ globalStage: state });
 const hist = createBrowserHistory();
@@ -24,7 +26,9 @@ class App extends Component {
             path={"/menu/today"}
             render={() => <h1>Today we have....</h1>}
           />
-          <Route path={"/menus"} render={() => <h1>Menu list</h1>} />
+          <Route path={"/menus"} component={menuScreen} />
+          <Route path={"/menu/add"} component={menuDetailScreen} />
+          <Route path={"/menu/:id"} component={menuDetailScreen} />
           <Route path={"/"} component={homePageScreen} />
         </Switch>
         <div style={{position: "fixed", margin: "1em", bottom: "0px", left: "0px", zIndex: 6}}>
