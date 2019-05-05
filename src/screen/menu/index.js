@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Container, Grid, Button } from "semantic-ui-react";
+import { Container, Grid, Button, Icon } from "semantic-ui-react";
 import firebase from "./../../utils/firebase";
 import { Link } from "react-router-dom";
 import { Table } from "semantic-ui-react";
@@ -41,37 +41,21 @@ class menuScreen extends Component {
       });
   }
 
-  deleteUser(user) {
-    db.collection("users")
-      .doc(user.id)
-      .delete()
+  assignMenu(menu) {
+    this.setState({ loading: true });
+    let transaction = {};
+    transaction.assignTime = new Date().toTimeString();
+    transaction.assignDate = new Date().toDateString();
+    transaction.createdDate = new Date();
+    transaction.menu = menu.data;
+    delete menu.id;
+    db.collection("transaction")
+      .add(transaction)
       .then(() => {
-        console.log("Xóa thành công user ", user.data.name);
-        this.getUser();
+        this.setState({ loading: false });
+        this.props.history.push("/menu/today");
       });
   }
-
-  addUser = e => {
-    this.setState({ loading: true });
-    let user = {
-      name: this.state.name,
-      nickName: this.state.nickName,
-      status: this.state.status
-    };
-    db.collection("users")
-      .add(user)
-      .then(() => {
-        console.log(user.name, " has been added.");
-        this.getUser();
-        this.setState({ loading: false });
-      });
-    this.setState({
-      name: "",
-      nickName: "",
-      status: ""
-    });
-    e.preventDefault();
-  };
 
   render() {
     return (
@@ -79,10 +63,21 @@ class menuScreen extends Component {
         <Grid>
           <Grid.Row>
             <Grid.Column width={8}>
-              <Link to="/">Back</Link>
+              <Link to="/">
+                <Button icon labelPosition="left" style={{ float: "left" }}>
+                  <Icon name="arrow left" /> BACK
+                </Button>
+              </Link>
             </Grid.Column>
             <Grid.Column width={8} textAlign="right">
-              <Link to="/menu/add">Add</Link>
+              <Link to="/menu/today">
+                <Button color="blue">TODAY</Button>
+              </Link>
+              <Link to="/menu/add">
+                <Button color="green" icon labelPosition="right">
+                  <Icon name="plus" /> ADD
+                </Button>
+              </Link>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -104,11 +99,19 @@ class menuScreen extends Component {
 
           <Table.Body>
             {(this.state.menuList &&
+              this.state.menuList.length > 0 &&
               this.state.menuList.map((menu, index) => (
                 <Table.Row key={index}>
                   <Table.Cell>{menu.data.name}</Table.Cell>
                   <Table.Cell>{menu.data.address}</Table.Cell>
                   <Table.Cell textAlign="right">
+                    <Button
+                      color="yellow"
+                      onClick={() => this.assignMenu(menu)}
+                      loading={this.state.loading}
+                    >
+                      Assign
+                    </Button>
                     <Link to={`/menu/${menu.id}`}>
                       <Button color="green">Edit</Button>
                     </Link>

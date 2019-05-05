@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Container, Grid, Button, Form, List, Label } from "semantic-ui-react";
+import {
+  Container,
+  Grid,
+  Button,
+  Form,
+  List,
+  Label,
+  Icon
+} from "semantic-ui-react";
 import firebase from "./../../utils/firebase";
 import { Link } from "react-router-dom";
 const db = firebase.firestore();
@@ -24,7 +32,7 @@ class menuDetailScreen extends Component {
     this.setState(input);
   };
 
-  componentDidMount() {
+  componentWillMount() {
     if (this.props.match.params.id) {
       this.getMenu();
     }
@@ -106,7 +114,11 @@ class menuDetailScreen extends Component {
       <Container>
         <Grid>
           <Grid.Row>
-            <Link to="/menus">Back</Link>
+            <Link to="/menus">
+              <Button icon labelPosition="left" style={{ float: "left" }}>
+                <Icon name="arrow left" /> BACK
+              </Button>
+            </Link>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column centered>
@@ -181,8 +193,8 @@ class menuDetailScreen extends Component {
                               onClick={() => {
                                 let foods = this.state.foods;
                                 foods.push({
-                                  foodName: this.state.foodName,
-                                  foodPrice: this.state.foodPrice
+                                  name: this.state.foodName,
+                                  price: this.state.foodPrice
                                 });
                                 console.log(foods);
                                 this.setState({
@@ -225,11 +237,11 @@ class menuDetailScreen extends Component {
                                 />
                                 <List.Content>
                                   <List.Header as="a" style={{ padding: 5 }}>
-                                    {food.foodName}
+                                    {food.name}
                                   </List.Header>
                                   <List.Description as="a">
                                     <Label color="orange" tag>
-                                      {food.foodPrice} đ
+                                      {food.price} đ
                                     </Label>
                                   </List.Description>
                                 </List.Content>
