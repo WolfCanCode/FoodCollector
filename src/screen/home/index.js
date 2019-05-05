@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Container, Card, Grid, Button, Form } from "semantic-ui-react";
+import { Container,Button} from "semantic-ui-react";
+
 import firebase from "./../../utils/firebase";
+import { Link } from "react-router-dom";
 
 const db = firebase.firestore();
 
@@ -55,7 +57,7 @@ class homePageScreen extends Component {
     let user = {
       name: this.state.name,
       nickName: this.state.nickName,
-      status: this.state.status,
+      status: this.state.status
     };
     db.collection("users")
       .add(user)
@@ -70,13 +72,17 @@ class homePageScreen extends Component {
       status: ""
     });
     e.preventDefault();
-
   };
 
   render() {
     return (
       <Container>
-        
+        <Link to="/menus">
+          <Button color="orange">MENUS</Button>
+        </Link>
+        <Link to="/menu/today">
+          <Button color="blue">TODAY</Button>
+        </Link>
       </Container>
     );
   }

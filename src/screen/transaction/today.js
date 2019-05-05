@@ -8,9 +8,14 @@ import {
   Feed,
   Icon,
   Segment,
-  Button
+  Button,
+  Popup,
+  List,
+  Image
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import pluralize from "pluralize";
+import _ from "underscore";
 
 const db = firebase.firestore();
 
@@ -28,7 +33,7 @@ class todayMenuScreen extends Component {
     this.getFirstLoad();
   }
 
-  getFirstLoad() {
+  getFirstLoad = () => {
     // let today = new Date();
     // let startDate = new Date(today.toDateString());
     // let endDate = new Date(
@@ -48,13 +53,26 @@ class todayMenuScreen extends Component {
           transactions: transactions
         });
       });
-  }
+  };
+
+  doPick = food => {
+    if (this.props.globalStage.user) {
+      let user = _.filter(
+        food.users,
+        user => user.name === this.props.globalStage.user.name
+      );
+      if (user) {
+      } else {
+      }
+    } else {
+    }
+  };
 
   render() {
     return (
       <Container>
         <Grid>
-          <Link to="/menus">
+          <Link to="/">
             <Button icon labelPosition="left" style={{ float: "left" }}>
               <Icon name="arrow left" /> BACK
             </Button>
@@ -81,10 +99,50 @@ class todayMenuScreen extends Component {
                             <Feed.Summary>
                               <Feed.User>{food.name}</Feed.User> {food.price} đ
                             </Feed.Summary>
+
                             <Feed.Meta>
-                              <Feed.Like>
-                                <Icon name="like" />4 Likes
-                              </Feed.Like>
+                              <Popup
+                                trigger={
+                                  <Feed.Like
+                                    style={{ fontSize: 15 }}
+                                    onClick={() => this.doPick(food)}
+                                  >
+                                    <Icon name="like" />
+                                    {(food.users && food.users.length) ||
+                                      0}{" "}
+                                    {pluralize(
+                                      "Pick",
+                                      (food.users && food.users.length) || 1
+                                    )}
+                                  </Feed.Like>
+                                }
+                              >
+                                <Popup.Header>People who pick</Popup.Header>
+                                <Popup.Content>
+                                  <List>
+                                    {(food.users &&
+                                      food.users.length > 0 &&
+                                      food.users.map(user => (
+                                        <List.Item>
+                                          <Image
+                                            avatar
+                                            src="https://img.icons8.com/bubbles/2x/administrator-male.png"
+                                          />
+                                          <List.Content>
+                                            <List.Header as="a">
+                                              {user.name}
+                                            </List.Header>
+                                            <List.Description>
+                                              has picked <b>{user.quantity}</b>{" "}
+                                              {food.name}
+                                            </List.Description>
+                                          </List.Content>
+                                        </List.Item>
+                                      ))) ||
+                                      "No one pick this one"}
+                                  </List>
+                                </Popup.Content>
+                              </Popup>
                             </Feed.Meta>
                           </Feed.Content>
                         </Feed.Event>

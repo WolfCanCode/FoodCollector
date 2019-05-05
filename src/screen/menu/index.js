@@ -70,9 +70,6 @@ class menuScreen extends Component {
               </Link>
             </Grid.Column>
             <Grid.Column width={8} textAlign="right">
-              <Link to="/menu/today">
-                <Button color="blue">TODAY</Button>
-              </Link>
               <Link to="/menu/add">
                 <Button color="green" icon labelPosition="right">
                   <Icon name="plus" /> ADD
