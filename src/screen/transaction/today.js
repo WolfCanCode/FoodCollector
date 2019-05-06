@@ -11,7 +11,9 @@ import {
   Button,
   Popup,
   List,
-  Image
+  Image,
+  Modal,
+  Input
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import pluralize from "pluralize";
@@ -25,7 +27,8 @@ class todayMenuScreen extends Component {
     super(props);
 
     this.state = {
-      loading: false
+      loading: false,
+      quantity: 0
     };
   }
 
@@ -41,6 +44,7 @@ class todayMenuScreen extends Component {
     // );
     // console.log(startDate);
     // console.log(endDate);
+    console.log(new Date().toDateString());
     db.collection("transaction")
       .where("assignDate", "==", new Date().toDateString())
       .get()
@@ -55,22 +59,81 @@ class todayMenuScreen extends Component {
       });
   };
 
-  doPick = food => {
-    if (this.props.globalStage.user) {
-      let user = _.filter(
-        food.users,
-        user => user.name === this.props.globalStage.user.name
-      );
-      if (user) {
+  showQuantity(food, trans) {
+    this.setState({ hasPick: true, tempFood: food, tempTrans: trans });
+  }
+
+  doPick = async () => {
+    let food = this.state.tempFood;
+    let trans = this.state.tempTrans;
+    let transactions = this.state.transactions;
+    console.log("vaof rooi ");
+    if ((food.users && food.users.length === 0) || !food.users) {
+      food.users = [];
+    }
+    let index = await _.findIndex(
+      food.users,
+      user => user.name === this.props.globalStage.user.name
+    );
+    if (index !== -1) {
+      console.log(this.state.quantity);
+      if (this.state.quantity <= 0) {
+        food.users.splice(index, 1);
       } else {
+        food.users[index].quantity = this.state.quantity;
       }
     } else {
+      if (this.state.quantity <= 0) {
+      } else {
+        food.users.push({
+          name: this.props.globalStage.user.name,
+          quantity: this.state.quantity
+        });
+      }
     }
+    let indexTransaction = await _.findIndex(
+      transactions,
+      transaction => transaction.id === trans.id
+    );
+    let indexFood = await _.findIndex(
+      transactions[indexTransaction].data.menu.foods,
+      item => item.name === food.name
+    );
+    transactions[indexTransaction].data.menu.foods[indexFood] = food;
+    console.log(transactions[indexTransaction]);
+    db.collection("transaction")
+      .doc(transactions[indexTransaction].id)
+      .set(transactions[indexTransaction].data)
+      .then(() => {
+        this.setState({ transactions: transactions, hasPick: false });
+      });
   };
+
+  handleChange(value) {
+    this.setState({ quantity: value });
+  }
 
   render() {
     return (
       <Container>
+        <Modal
+          size="mini"
+          dimmer={this.state.hasPick}
+          open={this.state.hasPick}
+        >
+          <Modal.Header>Number of this stuff ?</Modal.Header>
+          <Modal.Content>
+            <Input
+              type="number"
+              placeholder="Quantity ..."
+              value={this.state.quantity}
+              onChange={e => this.handleChange(e.target.value)}
+            />
+          </Modal.Content>
+          <Modal.Actions>
+            <Button positive content="Deal" onClick={() => this.doPick()} />
+          </Modal.Actions>
+        </Modal>
         <Grid>
           <Link to="/">
             <Button icon labelPosition="left" style={{ float: "left" }}>
@@ -79,8 +142,8 @@ class todayMenuScreen extends Component {
           </Link>
           {(this.state.transactions &&
             this.state.transactions.length > 0 &&
-            this.state.transactions.map(transaction => (
-              <Grid.Row centered>
+            this.state.transactions.map((transaction, index) => (
+              <Grid.Row centered key={index}>
                 <Segment>
                   <Card
                     image="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
@@ -88,12 +151,12 @@ class todayMenuScreen extends Component {
                     meta="Quán ăn"
                     description={transaction.data.assignTime}
                   />
-                  <Feed size="large" centered>
+                  <Feed size="large">
                     {transaction.data.menu &&
                       transaction.data.menu.foods &&
                       transaction.data.menu.foods.length > 0 &&
-                      transaction.data.menu.foods.map(food => (
-                        <Feed.Event>
+                      transaction.data.menu.foods.map((food, index) => (
+                        <Feed.Event key={index}>
                           <Feed.Label image="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
                           <Feed.Content>
                             <Feed.Summary>
@@ -105,7 +168,9 @@ class todayMenuScreen extends Component {
                                 trigger={
                                   <Feed.Like
                                     style={{ fontSize: 15 }}
-                                    onClick={() => this.doPick(food)}
+                                    onClick={() =>
+                                      this.showQuantity(food, transaction)
+                                    }
                                   >
                                     <Icon name="like" />
                                     {(food.users && food.users.length) ||
@@ -122,8 +187,8 @@ class todayMenuScreen extends Component {
                                   <List>
                                     {(food.users &&
                                       food.users.length > 0 &&
-                                      food.users.map(user => (
-                                        <List.Item>
+                                      food.users.map((user, index) => (
+                                        <List.Item key={index}>
                                           <Image
                                             avatar
                                             src="https://img.icons8.com/bubbles/2x/administrator-male.png"

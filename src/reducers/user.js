@@ -1,6 +1,6 @@
 import { reactLocalStorage } from "reactjs-localstorage";
 
-export default function users(state={
+export default function user(state={
     name :"",
     nickName: "",
     status: ""
@@ -8,10 +8,7 @@ export default function users(state={
   switch (action.type) {
     case "SET_USER":
       state = action.user;
-      reactLocalStorage.set("name", state.name);
-      reactLocalStorage.set("nickName", state.nickName);
-      reactLocalStorage.set("status", state.status);
-      state.user = action.user;
+      reactLocalStorage.set("name_o2", state.name);
       return state;
     default:
       return state;

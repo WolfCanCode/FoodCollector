@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Container,Button} from "semantic-ui-react";
-
 import firebase from "./../../utils/firebase";
 import { Link } from "react-router-dom";
 
