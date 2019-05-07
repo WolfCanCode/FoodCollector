@@ -121,20 +121,7 @@ class App extends Component {
                 <Route path={"/"} component={homePageScreen} />
               </Switch>
             </Grid.Row>
-            <div
-              style={{
-                position: "fixed",
-                margin: "1em",
-                bottom: "0px",
-                left: "0px",
-                zIndex: 6
-              }}
-            >
-              <Button>
-                Make by WolfCanCode for O2f with{" "}
-                <Icon name="heart" color="red" />{" "}
-              </Button>
-            </div>
+
           </Grid>
         </Container>
       </Router>

@@ -15,7 +15,8 @@ import {
   Input,
   Label,
   Table,
-  Header
+  Header,
+  Placeholder
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import _ from "underscore";
@@ -28,7 +29,7 @@ class todayMenuScreen extends Component {
     super(props);
 
     this.state = {
-      loading: false,
+      loading: true,
       quantity: 0,
       deal: {},
       dealTransactionId: null,
@@ -54,7 +55,8 @@ class todayMenuScreen extends Component {
           return { id: doc.id, data: doc.data() };
         });
         this.setState({
-          transactions: transactions
+          transactions: transactions,
+          loading: false
         });
       });
   };
@@ -285,13 +287,19 @@ class todayMenuScreen extends Component {
                     meta="Quán ăn"
                     description={transaction.data.assignTime}
                   />
-                  <Feed size="large">
+                  <Feed
+                    size="large"
+                    style={{ overflowY: "scroll", maxHeight: 350 }}
+                  >
                     {transaction.data.menu &&
                       transaction.data.menu.foods &&
                       transaction.data.menu.foods.length > 0 &&
                       transaction.data.menu.foods.map((food, index) => (
                         <Feed.Event key={index}>
-                          <Feed.Label image="https://cdn3.iconfinder.com/data/icons/ios-web-user-interface-flat-circle-shadow-vol-6/512/Food_fork_kitchen_knife_meanns_restaurant-512.png" />
+                          <Feed.Label
+                            style={{ margin: "auto" }}
+                            image="https://cdn3.iconfinder.com/data/icons/ios-web-user-interface-flat-circle-shadow-vol-6/512/Food_fork_kitchen_knife_meanns_restaurant-512.png"
+                          />
                           <Feed.Content>
                             <Feed.Summary>
                               <Feed.User>{food.name}</Feed.User> {food.price} đ
@@ -348,11 +356,47 @@ class todayMenuScreen extends Component {
                   </Button>
                 </Segment>
               </Grid.Row>
-            ))) || (
-            <Grid.Row centered>
-              <h3>Hôm nay chửa có thực đơn -.- hoặc do đang tải :-o </h3>
-            </Grid.Row>
-          )}
+            ))) ||
+            ((this.state.loading && (
+              <Grid.Row centered>
+                <Segment loading style={{ height: 650, width: 300 }}>
+                  <Placeholder>
+                    <Placeholder.Image square/>
+
+                    <Placeholder.Paragraph>
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                    </Placeholder.Paragraph>
+                    <Placeholder.Paragraph>
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                    </Placeholder.Paragraph>
+                    <Placeholder.Paragraph>
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                    </Placeholder.Paragraph>
+                    <Placeholder.Paragraph>
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                      <Placeholder.Line />
+                    </Placeholder.Paragraph>
+
+                    
+                  </Placeholder>
+                </Segment>
+              </Grid.Row>
+            )) || (
+              <Grid.Row centered>
+                <h3>Hôm nay chửa có thực đơn -.- hoặc do đang tải :-o </h3>
+              </Grid.Row>
+            ))}
         </Grid>
       </Container>
     );
