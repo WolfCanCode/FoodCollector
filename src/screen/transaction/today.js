@@ -15,8 +15,7 @@ import {
   Input,
   Label,
   Table,
-  Header,
-  Image
+  Header
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import _ from "underscore";
@@ -32,7 +31,9 @@ class todayMenuScreen extends Component {
       loading: false,
       quantity: 0,
       deal: {},
-      dealTransactionId: null
+      dealTransactionId: null,
+      previewFoods: [],
+      showPreview: false
     };
   }
 
@@ -68,6 +69,7 @@ class todayMenuScreen extends Component {
       trans.menu.foods,
       food => food.users && food.users.length > 0
     );
+    let previewFoods = [];
     for (let i = 0; i < foods.length; i++) {
       let count = 0;
       for (let user of foods[i].users) {
@@ -75,14 +77,16 @@ class todayMenuScreen extends Component {
         console.log(user.quantity);
       }
       foods[i].totalQuantity = count;
+      previewFoods.push({ name: foods[i].name, totalQuantity: count });
     }
 
     let deal = trans;
-    console.log(deal);
-    console.log(trans);
-    console.log(transaction);
     deal.menu.foods = foods;
-    this.setState({ deal: deal, dealTransactionId: transaction.id });
+    this.setState({
+      deal: deal,
+      dealTransactionId: transaction.id,
+      previewFoods: previewFoods
+    });
   }
 
   doDeal() {
@@ -188,6 +192,29 @@ class todayMenuScreen extends Component {
               this.state.deal.menu.name}
           </Modal.Header>
           <Modal.Content>
+            <Modal
+              size="mini"
+              dimmer={true}
+              open={this.state.showPreview}
+              onClose={() => this.setState({ showPreview: false })}
+            >
+              <Modal.Header>Đơn hàng</Modal.Header>
+              <Modal.Content>
+                {this.state.previewFoods.map((food, index) => (
+                  <p key={index}>
+                    {food.name} x {food.totalQuantity}
+                  </p>
+                ))}
+              </Modal.Content>
+              <Modal.Actions>
+                <Button
+                  color="grey"
+                  content="Cancel"
+                  onClick={() => this.setState({ showPreview: false })}
+                />
+              </Modal.Actions>
+            </Modal>
+
             <Table basic="very" celled collapsing>
               <Table.Header>
                 <Table.Row>
@@ -232,6 +259,11 @@ class todayMenuScreen extends Component {
             </Table>
           </Modal.Content>
           <Modal.Actions>
+            <Button
+              color="facebook"
+              content="Xuất đơn"
+              onClick={() => this.setState({ showPreview: true })}
+            />
             <Button positive content="Duyệt" onClick={() => this.doDeal()} />
           </Modal.Actions>
         </Modal>
