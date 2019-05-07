@@ -78,7 +78,7 @@ class App extends Component {
     return (
       <Router history={hist}>
         <Container>
-          <Modal  size="mini" dimmer={this.state.hasReg} open={this.state.hasReg}>
+          <Modal  size="mini" dimmer={true} open={this.state.hasReg}>
             <Modal.Header>Make sure who are you ?</Modal.Header>
             <Modal.Content>
               <Input

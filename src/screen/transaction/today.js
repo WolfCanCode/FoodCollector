@@ -11,12 +11,14 @@ import {
   Button,
   Popup,
   List,
-  Image,
   Modal,
-  Input
+  Input,
+  Label,
+  Table,
+  Header,
+  Image
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import pluralize from "pluralize";
 import _ from "underscore";
 
 const db = firebase.firestore();
@@ -28,22 +30,20 @@ class todayMenuScreen extends Component {
 
     this.state = {
       loading: false,
-      quantity: 0
+      quantity: 0,
+      deal: {},
+      dealTransactionId: null
     };
   }
 
   componentDidMount() {
-    this.getFirstLoad();
+    let self = this;
+    setInterval(function() {
+      self.getFirstLoad();
+    }, 1000);
   }
 
   getFirstLoad = () => {
-    // let today = new Date();
-    // let startDate = new Date(today.toDateString());
-    // let endDate = new Date(
-    //   new Date(new Date(new Date().setDate(today.getDate() + 1)).toDateString())
-    // );
-    // console.log(startDate);
-    // console.log(endDate);
     console.log(new Date().toDateString());
     db.collection("transaction")
       .where("assignDate", "==", new Date().toDateString())
@@ -52,7 +52,6 @@ class todayMenuScreen extends Component {
         let transactions = collection.docs.map(doc => {
           return { id: doc.id, data: doc.data() };
         });
-        console.log(transactions);
         this.setState({
           transactions: transactions
         });
@@ -63,11 +62,46 @@ class todayMenuScreen extends Component {
     this.setState({ hasPick: true, tempFood: food, tempTrans: trans });
   }
 
+  showDeal(transaction) {
+    let trans = JSON.parse(JSON.stringify(transaction.data));
+    let foods = _.filter(
+      trans.menu.foods,
+      food => food.users && food.users.length > 0
+    );
+    for (let i = 0; i < foods.length; i++) {
+      let count = 0;
+      for (let user of foods[i].users) {
+        count += parseInt(user.quantity);
+        console.log(user.quantity);
+      }
+      foods[i].totalQuantity = count;
+    }
+
+    let deal = trans;
+    console.log(deal);
+    console.log(trans);
+    console.log(transaction);
+    deal.menu.foods = foods;
+    this.setState({ deal: deal, dealTransactionId: transaction.id });
+  }
+
+  doDeal() {
+    db.collection("transaction-history")
+      .add(this.state.deal)
+      .then(() => {
+        db.collection("transaction")
+          .doc(this.state.dealTransactionId)
+          .delete()
+          .then(() => {
+            this.setState({ deal: {}, dealTransactionId: null });
+          });
+      });
+  }
+
   doPick = async () => {
     let food = this.state.tempFood;
     let trans = this.state.tempTrans;
     let transactions = this.state.transactions;
-    console.log("vaof rooi ");
     if ((food.users && food.users.length === 0) || !food.users) {
       food.users = [];
     }
@@ -76,7 +110,6 @@ class todayMenuScreen extends Component {
       user => user.name === this.props.globalStage.user.name
     );
     if (index !== -1) {
-      console.log(this.state.quantity);
       if (this.state.quantity <= 0) {
         food.users.splice(index, 1);
       } else {
@@ -100,12 +133,15 @@ class todayMenuScreen extends Component {
       item => item.name === food.name
     );
     transactions[indexTransaction].data.menu.foods[indexFood] = food;
-    console.log(transactions[indexTransaction]);
     db.collection("transaction")
       .doc(transactions[indexTransaction].id)
       .set(transactions[indexTransaction].data)
       .then(() => {
-        this.setState({ transactions: transactions, hasPick: false });
+        this.setState({
+          transactions: transactions,
+          hasPick: false,
+          quantity: 0
+        });
       });
   };
 
@@ -118,26 +154,92 @@ class todayMenuScreen extends Component {
       <Container>
         <Modal
           size="mini"
-          dimmer={this.state.hasPick}
+          dimmer={true}
           open={this.state.hasPick}
+          onClose={() => this.setState({ hasPick: false })}
         >
-          <Modal.Header>Number of this stuff ?</Modal.Header>
+          <Modal.Header>Số lượng của sản phẩm ?</Modal.Header>
           <Modal.Content>
+            <Label>Hãy nhập số lượng</Label>
             <Input
               type="number"
-              placeholder="Quantity ..."
+              placeholder="Số lượng ..."
               value={this.state.quantity}
+              label={{ content: "Cái" }}
+              labelPosition="right"
               onChange={e => this.handleChange(e.target.value)}
             />
           </Modal.Content>
           <Modal.Actions>
-            <Button positive content="Deal" onClick={() => this.doPick()} />
+            <Button positive content="Duyệt" onClick={() => this.doPick()} />
           </Modal.Actions>
         </Modal>
+
+        <Modal
+          size="mini"
+          dimmer={true}
+          open={Boolean(Object.keys(this.state.deal).length)}
+          onClose={() => this.setState({ deal: {} })}
+        >
+          <Modal.Header>
+            Chốt đơn hàng{" "}
+            {this.state.deal &&
+              this.state.deal.menu &&
+              this.state.deal.menu.name}
+          </Modal.Header>
+          <Modal.Content>
+            <Table basic="very" celled collapsing>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Món</Table.HeaderCell>
+                  <Table.HeaderCell>Người đặt</Table.HeaderCell>
+                  <Table.HeaderCell>Số lượng</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                {this.state.deal &&
+                  this.state.deal.menu &&
+                  this.state.deal.menu.foods &&
+                  this.state.deal.menu.foods.map((food, index) => (
+                    <Table.Row key={index}>
+                      <Table.Cell>
+                        <Header as="h4" image>
+                          <Header.Content>{food.name}</Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Grid>
+                          {food.users &&
+                            food.users.map((user, index) => (
+                              <Grid.Row centered key={index}>
+                                <Header as="h4" image>
+                                  <Header.Content>
+                                    {user.name}
+                                    <Header.Subheader>
+                                      X{user.quantity}
+                                    </Header.Subheader>
+                                  </Header.Content>
+                                </Header>
+                              </Grid.Row>
+                            ))}
+                        </Grid>
+                      </Table.Cell>
+                      <Table.Cell>{food.totalQuantity}</Table.Cell>
+                    </Table.Row>
+                  ))}
+              </Table.Body>
+            </Table>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button positive content="Duyệt" onClick={() => this.doDeal()} />
+          </Modal.Actions>
+        </Modal>
+
         <Grid>
           <Link to="/">
             <Button icon labelPosition="left" style={{ float: "left" }}>
-              <Icon name="arrow left" /> BACK
+              <Icon name="arrow left" /> TRỞ VỀ
             </Button>
           </Link>
           {(this.state.transactions &&
@@ -157,7 +259,7 @@ class todayMenuScreen extends Component {
                       transaction.data.menu.foods.length > 0 &&
                       transaction.data.menu.foods.map((food, index) => (
                         <Feed.Event key={index}>
-                          <Feed.Label image="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
+                          <Feed.Label image="https://cdn3.iconfinder.com/data/icons/ios-web-user-interface-flat-circle-shadow-vol-6/512/Food_fork_kitchen_knife_meanns_restaurant-512.png" />
                           <Feed.Content>
                             <Feed.Summary>
                               <Feed.User>{food.name}</Feed.User> {food.price} đ
@@ -166,45 +268,37 @@ class todayMenuScreen extends Component {
                             <Feed.Meta>
                               <Popup
                                 trigger={
-                                  <Feed.Like
-                                    style={{ fontSize: 15 }}
-                                    onClick={() =>
-                                      this.showQuantity(food, transaction)
-                                    }
-                                  >
-                                    <Icon name="like" />
-                                    {(food.users && food.users.length) ||
-                                      0}{" "}
-                                    {pluralize(
-                                      "Pick",
-                                      (food.users && food.users.length) || 1
-                                    )}
+                                  <Feed.Like style={{ fontSize: 15 }}>
+                                    <Icon
+                                      name="sticky note"
+                                      onClick={() =>
+                                        this.showQuantity(food, transaction)
+                                      }
+                                    />{" "}
+                                    Có {(food.users && food.users.length) || 0}{" "}
+                                    người đặt
                                   </Feed.Like>
                                 }
                               >
-                                <Popup.Header>People who pick</Popup.Header>
+                                <Popup.Header>Món được ai đặt ?</Popup.Header>
                                 <Popup.Content>
                                   <List>
                                     {(food.users &&
                                       food.users.length > 0 &&
                                       food.users.map((user, index) => (
                                         <List.Item key={index}>
-                                          <Image
-                                            avatar
-                                            src="https://img.icons8.com/bubbles/2x/administrator-male.png"
-                                          />
                                           <List.Content>
                                             <List.Header as="a">
                                               {user.name}
                                             </List.Header>
                                             <List.Description>
-                                              has picked <b>{user.quantity}</b>{" "}
+                                              đã đặt <b>{user.quantity}</b> món{" "}
                                               {food.name}
                                             </List.Description>
                                           </List.Content>
                                         </List.Item>
                                       ))) ||
-                                      "No one pick this one"}
+                                      "Không ai đặt món này cả"}
                                   </List>
                                 </Popup.Content>
                               </Popup>
@@ -213,11 +307,18 @@ class todayMenuScreen extends Component {
                         </Feed.Event>
                       ))}
                   </Feed>
+                  <Button
+                    color="green"
+                    attached="bottom"
+                    onClick={() => this.showDeal(transaction)}
+                  >
+                    CHỐT
+                  </Button>
                 </Segment>
               </Grid.Row>
             ))) || (
             <Grid.Row centered>
-              <h3>Today list is empty today !!! ^^</h3>
+              <h3>Hôm nay chửa có thực đơn -.- hoặc do đang tải :-o </h3>
             </Grid.Row>
           )}
         </Grid>

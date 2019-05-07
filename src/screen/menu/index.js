@@ -65,14 +65,14 @@ class menuScreen extends Component {
             <Grid.Column width={8}>
               <Link to="/">
                 <Button icon labelPosition="left" style={{ float: "left" }}>
-                  <Icon name="arrow left" /> BACK
+                  <Icon name="arrow left" /> TRỞ VỀ
                 </Button>
               </Link>
             </Grid.Column>
             <Grid.Column width={8} textAlign="right">
               <Link to="/menu/add">
                 <Button color="green" icon labelPosition="right">
-                  <Icon name="plus" /> ADD
+                  <Icon name="plus" /> THÊM
                 </Button>
               </Link>
             </Grid.Column>
@@ -83,14 +83,14 @@ class menuScreen extends Component {
             <Table.Row>
               <Table.HeaderCell width={4} />
               <Table.HeaderCell width={4} textAlign="center">
-                MENU FOOD
+                Danh sách MENU
               </Table.HeaderCell>
               <Table.HeaderCell width={4} />
             </Table.Row>
             <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Address</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">Action</Table.HeaderCell>
+              <Table.HeaderCell>Tên</Table.HeaderCell>
+              <Table.HeaderCell>Địa chỉ</Table.HeaderCell>
+              <Table.HeaderCell textAlign="right">Hành động</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -107,17 +107,17 @@ class menuScreen extends Component {
                       onClick={() => this.assignMenu(menu)}
                       loading={this.state.loading}
                     >
-                      Assign
+                      Đẩy lên
                     </Button>
                     <Link to={`/menu/${menu.id}`}>
-                      <Button color="green">Edit</Button>
+                      <Button color="green">Sửa</Button>
                     </Link>
-                    <Button color="red">Delete</Button>
+                    <Button color="red">Xóa</Button>
                   </Table.Cell>
                 </Table.Row>
               ))) || (
               <Table.Row>
-                <Table.Cell width={4}>This list is empty</Table.Cell>
+                <Table.Cell width={4}>Danh sách rỗng</Table.Cell>
                 <Table.HeaderCell width={4} />
                 <Table.HeaderCell width={4} />
               </Table.Row>
