@@ -29,6 +29,7 @@ class menuScreen extends Component {
   };
 
   getMenu() {
+    this.setState({ loading: true });
     db.collection("menus")
       .get()
       .then(collection => {
@@ -36,7 +37,7 @@ class menuScreen extends Component {
         let menus = collection.docs.map(doc => {
           return { id: doc.id, data: doc.data() };
         });
-        console.log(menus);
+        this.setState({ loading: false });
         this.setState({ menuList: menus });
       });
   }
@@ -57,9 +58,21 @@ class menuScreen extends Component {
       });
   }
 
+  deleteMenu(menu) {
+    let confirm = window.confirm("Bạn có muốn xóa menu này không ?");
+    if (confirm) {
+      db.collection("menus")
+        .doc(menu.id)
+        .delete()
+        .then(() => {
+          this.getMenu();
+        });
+    }
+  }
+
   render() {
     return (
-      <Container style={{width:'100vw'}}>
+      <Container style={{ width: "100vw" }}>
         <Grid>
           <Grid.Row>
             <Grid.Column width={8}>
@@ -81,10 +94,10 @@ class menuScreen extends Component {
             <Table
               unstackable
               selectable
-              key={"black"}
+              key={"orange"}
               inverted
-              color={"black"}
-              style={{width:'100vw'}}
+              color={"orange"}
+              style={{ width: "100vw" }}
             >
               <Table.Header>
                 <Table.Row>
@@ -113,6 +126,7 @@ class menuScreen extends Component {
                           color="yellow"
                           onClick={() => this.assignMenu(menu)}
                           loading={this.state.loading}
+                          disabled={this.state.loading}
                           icon
                         >
                           <Icon name="arrow up" />
@@ -120,22 +134,40 @@ class menuScreen extends Component {
                       </Table.Cell>
                       <Table.Cell textAlign="right" width={1}>
                         <Link to={`/menu/${menu.id}`}>
-                          <Button color="green" icon>
+                          <Button
+                            color="green"
+                            icon
+                            loading={this.state.loading}
+                            disabled={this.state.loading}
+                          >
                             <Icon name="edit" />
                           </Button>
                         </Link>
                       </Table.Cell>
                       <Table.Cell textAlign="right" width={1}>
-                        <Button color="red" icon>
+                        <Button
+                          color="red"
+                          icon
+                          onClick={() => this.deleteMenu(menu)}
+                          loading={this.state.loading}
+                          disabled={this.state.loading}
+                        >
                           <Icon name="delete" />
                         </Button>
                       </Table.Cell>
                     </Table.Row>
-                  ))) || (
-                  <Table.Row>
-                    <Table.Cell colSpan={3}>Danh sách rỗng</Table.Cell>
-                  </Table.Row>
-                )}
+                  ))) ||
+                  (this.state.loading && (
+                    <Table.Row textAlign="center">
+                      <Table.Cell colSpan={3}>
+                        <h3>Đang tải...</h3>
+                      </Table.Cell>
+                    </Table.Row>
+                  )) || (
+                    <Table.Row>
+                      <Table.Cell colSpan={3}>Danh sách rỗng</Table.Cell>
+                    </Table.Row>
+                  )}
               </Table.Body>
             </Table>
           </Grid.Row>

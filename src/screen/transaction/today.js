@@ -422,7 +422,7 @@ class todayMenuScreen extends Component {
               </Grid.Row>
             )) || (
               <Grid.Row centered>
-                <Header as="h1" icon="calendar alternate outline" color="grey" content="Hôm nay chửa có thực đơn" />{" "}
+                <Header as="h2" icon="calendar alternate outline" style={{color:'white'}} content="Hôm nay chửa có thực đơn" />{" "}
               </Grid.Row>
             ))}
         </Grid>

@@ -8,7 +8,8 @@ import {
   List,
   Label,
   Icon,
-  Segment
+  Segment,
+  Image
 } from "semantic-ui-react";
 import firebase from "./../../utils/firebase";
 import { Link } from "react-router-dom";
@@ -40,6 +41,7 @@ class menuDetailScreen extends Component {
   }
 
   getMenu() {
+    this.setState({ loading: true });
     db.collection("menus")
       .doc(this.props.match.params.id)
       .get()
@@ -48,9 +50,10 @@ class menuDetailScreen extends Component {
         this.setState({
           name: menu.name,
           address: menu.address,
-          foods: menu.foods
+          foods: menu.foods,
+          logo: menu.logo
         });
-        console.log(menu);
+        this.setState({ loading: false });
       });
   }
 
@@ -69,7 +72,8 @@ class menuDetailScreen extends Component {
     let menu = {
       name: this.state.name,
       address: this.state.address,
-      foods: this.state.foods
+      foods: this.state.foods,
+      logo: this.state.logo
     };
     if (this.props.match.params.id) {
       db.collection("menus")
@@ -96,6 +100,10 @@ class menuDetailScreen extends Component {
     }
     e.preventDefault();
   };
+
+  addDefaultSrc(e){
+    e.target.src = 'https://cdn.dribbble.com/users/1012566/screenshots/4187820/topic-2.jpg';
+  }
 
   deleteFood = food => {
     {
@@ -128,7 +136,12 @@ class menuDetailScreen extends Component {
               <Grid doubling columns={2}>
                 <Grid.Row textAlign="left">
                   <Grid.Column width={8}>
-                    <Segment raised inverted color="black">
+                    <Segment
+                      raised
+                      inverted
+                      color="orange"
+                      loading={this.state.loading}
+                    >
                       <Form inverted>
                         <Form.Field>
                           <label>Tên Menu</label>
@@ -163,9 +176,20 @@ class menuDetailScreen extends Component {
                             disabled={this.state.loading}
                           />
                         </Form.Field>
+                        <Form.Field>
+                          <Image
+                            size="small"
+                            src={
+                              this.state.logo ||
+                              "https://cdn.dribbble.com/users/1012566/screenshots/4187820/topic-2.jpg"
+                            }
+                            onError={this.addDefaultSrc}
+                          />
+                        </Form.Field>
                         <Button
                           onClick={e => this.addMenu(e)}
                           loading={this.state.loading}
+                          color="yellow"
                         >
                           Thêm
                         </Button>
@@ -173,64 +197,75 @@ class menuDetailScreen extends Component {
                     </Segment>
                   </Grid.Column>
                   <Grid.Column width={8}>
-                    <Segment raised inverted color="black">
+                    <Segment
+                      raised
+                      inverted
+                      color="orange"
+                      loading={this.state.loading}
+                    >
+                      <Form inverted>
+                        <Form.Group widths="equal">
+                          <Form.Field>
+                            <label>Tên món ăn</label>
+                            <input
+                              placeholder="Food Name"
+                              onChange={e =>
+                                this.handleChange({
+                                  foodName: e.target.value
+                                })
+                              }
+                              value={this.state.foodName}
+                              disabled={this.state.loading}
+                            />
+                          </Form.Field>
+                          <Form.Field>
+                            <label>Giá</label>
+                            <input
+                              placeholder="Food price"
+                              onChange={e =>
+                                this.handleChange({
+                                  foodPrice: e.target.value
+                                })
+                              }
+                              type="number"
+                              value={this.state.foodPrice}
+                              disabled={this.state.loading}
+                            />
+                          </Form.Field>
+                          <Form.Field>
+                            <label>_</label>
+                            <Button
+                              onClick={() => {
+                                let foods = this.state.foods;
+                                if (
+                                  this.state.foodName &&
+                                  this.state.foodPrice !== 0
+                                ) {
+                                  foods.push({
+                                    name: this.state.foodName,
+                                    price: parseInt(this.state.foodPrice)
+                                  });
+                                  console.log(foods);
+                                  this.setState({
+                                    foods: foods,
+                                    foodName: "",
+                                    foodPrice: 0
+                                  });
+                                } else {
+                                  alert(
+                                    "Không được để trống và giá để 0 nha !"
+                                  );
+                                }
+                              }}
+                              color="yellow"
+                            >
+                              Thêm món
+                            </Button>
+                          </Form.Field>
+                        </Form.Group>
+                      </Form>
                       <Grid>
-                        <Grid.Row centered>
-                          <Form inverted>
-                            <Form.Group widths="equal">
-                              <Form.Field>
-                                <label>Tên món ăn</label>
-                                <input
-                                  placeholder="Food Name"
-                                  onChange={e =>
-                                    this.handleChange({
-                                      foodName: e.target.value
-                                    })
-                                  }
-                                  value={this.state.foodName}
-                                  disabled={this.state.loading}
-                                />
-                              </Form.Field>
-                              <Form.Field>
-                                <label>Giá</label>
-                                <input
-                                  placeholder="Food price"
-                                  onChange={e =>
-                                    this.handleChange({
-                                      foodPrice: e.target.value
-                                    })
-                                  }
-                                  type="number"
-                                  value={this.state.foodPrice}
-                                  disabled={this.state.loading}
-                                />
-                              </Form.Field>
-                              <Form.Field>
-                                <label>...</label>
-                                <Button
-                                  onClick={() => {
-                                    let foods = this.state.foods;
-                                    foods.push({
-                                      name: this.state.foodName,
-                                      price: this.state.foodPrice
-                                    });
-                                    console.log(foods);
-                                    this.setState({
-                                      foods: foods,
-                                      foodName: "",
-                                      foodPrice: 0
-                                    });
-                                  }}
-                                >
-                                  Thêm món
-                                </Button>
-                              </Form.Field>
-                            </Form.Group>
-                          </Form>
-                        </Grid.Row>
-                        <Grid.Row centered>
-                          Danh sách món ăn
-                        </Grid.Row>
+                        <Grid.Row centered>Danh sách món ăn</Grid.Row>
                         <Grid.Row
                           centered
                           style={{ overflowY: "scroll", maxHeight: 500 }}
