@@ -270,7 +270,7 @@ class todayMenuScreen extends Component {
           </Modal.Actions>
         </Modal>
 
-        <Grid  style={{width:'95vw'}}>
+        <Grid>
           <Grid.Row>
           <Link to="/">
             <Button icon style={{ float: "left" }}>
