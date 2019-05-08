@@ -114,20 +114,22 @@ class menuDetailScreen extends Component {
     return (
       <Container>
         <Grid>
-          <Grid.Row>
-            <Link to="/menus">
-              <Button icon labelPosition="left" style={{ float: "left" }}>
-                <Icon name="arrow left" /> BACK
-              </Button>
-            </Link>
+          <Grid.Row style={{ minWidth: "100vw" }}>
+            <Grid.Column width={8}>
+              <Link to="/menus">
+                <Button icon style={{ float: "left" }}>
+                  <Icon name="arrow left" />
+                </Button>
+              </Link>
+            </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
               <Grid doubling columns={2}>
                 <Grid.Row textAlign="left">
                   <Grid.Column width={8}>
-                    <Segment raised>
-                      <Form>
+                    <Segment raised inverted color="black">
+                      <Form inverted>
                         <Form.Field>
                           <label>Tên Menu</label>
                           <input
@@ -171,10 +173,10 @@ class menuDetailScreen extends Component {
                     </Segment>
                   </Grid.Column>
                   <Grid.Column width={8}>
-                    <Segment raised>
+                    <Segment raised inverted color="black">
                       <Grid>
                         <Grid.Row centered>
-                          <Form>
+                          <Form inverted>
                             <Form.Group widths="equal">
                               <Form.Field>
                                 <label>Tên món ăn</label>
@@ -203,67 +205,83 @@ class menuDetailScreen extends Component {
                                   disabled={this.state.loading}
                                 />
                               </Form.Field>
-                              <Button
-                                onClick={() => {
-                                  let foods = this.state.foods;
-                                  foods.push({
-                                    name: this.state.foodName,
-                                    price: this.state.foodPrice
-                                  });
-                                  console.log(foods);
-                                  this.setState({
-                                    foods: foods,
-                                    foodName: "",
-                                    foodPrice: 0
-                                  });
-                                }}
-                              >
-                                Thêm món
-                              </Button>
+                              <Form.Field>
+                                <label>...</label>
+                                <Button
+                                  onClick={() => {
+                                    let foods = this.state.foods;
+                                    foods.push({
+                                      name: this.state.foodName,
+                                      price: this.state.foodPrice
+                                    });
+                                    console.log(foods);
+                                    this.setState({
+                                      foods: foods,
+                                      foodName: "",
+                                      foodPrice: 0
+                                    });
+                                  }}
+                                >
+                                  Thêm món
+                                </Button>
+                              </Form.Field>
                             </Form.Group>
                           </Form>
+                        </Grid.Row>
+                        <Grid.Row centered>
+                          Danh sách món ăn
                         </Grid.Row>
                         <Grid.Row
                           centered
                           style={{ overflowY: "scroll", maxHeight: 500 }}
                         >
-                          <List divided relaxed="very" verticalAlign="middle">
-                            {(this.state.foods &&
-                              this.state.foods.length > 0 &&
-                              this.state.foods.map((food, index) => (
-                                <List.Item key={index}>
-                                  <List.Content
-                                    floated="right"
-                                    style={{ lineHeight: 5 }}
-                                  >
-                                    <Button
-                                      color="red"
-                                      icon
-                                      onClick={() => this.deleteFood(food)}
+                          <Segment raised>
+                            <List
+                              divided
+                              selection
+                              relaxed="very"
+                              verticalAlign="middle"
+                            >
+                              {(this.state.foods &&
+                                this.state.foods.length > 0 &&
+                                this.state.foods.map((food, index) => (
+                                  <List.Item key={index}>
+                                    <List.Content
+                                      floated="right"
+                                      style={{ lineHeight: 5 }}
                                     >
-                                      <Icon name="delete" />
-                                    </Button>
-                                  </List.Content>
-                                  <List.Icon
-                                    name="food"
-                                    size="large"
-                                    verticalAlign="middle"
-                                    color="orange"
-                                  />
-                                  <List.Content>
-                                    <List.Header as="a" style={{ padding: 5 }}>
-                                      {food.name}
-                                    </List.Header>
-                                    <List.Description as="a">
-                                      <Label color="orange" tag>
-                                        {food.price} đ
-                                      </Label>
-                                    </List.Description>
-                                  </List.Content>
-                                </List.Item>
-                              ))) ||
-                              "There are no food in this menu"}
-                          </List>
+                                      <Button
+                                        color="red"
+                                        icon
+                                        onClick={() => this.deleteFood(food)}
+                                      >
+                                        <Icon name="delete" />
+                                      </Button>
+                                    </List.Content>
+                                    <List.Icon
+                                      name="food"
+                                      size="large"
+                                      verticalAlign="middle"
+                                      color="orange"
+                                    />
+                                    <List.Content>
+                                      <List.Header
+                                        as="a"
+                                        style={{ padding: 5 }}
+                                      >
+                                        {food.name}
+                                      </List.Header>
+                                      <List.Description as="a">
+                                        <Label color="orange" tag>
+                                          {food.price} đ
+                                        </Label>
+                                      </List.Description>
+                                    </List.Content>
+                                  </List.Item>
+                                ))) ||
+                                "There are no food in this menu"}
+                            </List>
+                          </Segment>
                         </Grid.Row>
                       </Grid>
                     </Segment>

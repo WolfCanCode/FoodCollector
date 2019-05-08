@@ -119,14 +119,14 @@ class todayMenuScreen extends Component {
       if (this.state.quantity <= 0) {
         food.users.splice(index, 1);
       } else {
-        food.users[index].quantity = this.state.quantity;
+        food.users[index].quantity = parseInt(this.state.quantity);
       }
     } else {
       if (this.state.quantity <= 0) {
       } else {
         food.users.push({
           name: this.props.globalStage.user.name,
-          quantity: this.state.quantity
+          quantity: parseInt(this.state.quantity)
         });
       }
     }
@@ -151,6 +151,19 @@ class todayMenuScreen extends Component {
       });
   };
 
+  deleteTransaction(transaction) {
+    let confirm = window.confirm("Bạn có muốn xóa đơn này không ?");
+    if (confirm) {
+      this.setState({ loading: true });
+      db.collection("transaction")
+        .doc(transaction.id)
+        .delete()
+        .then(() => {
+          this.setState({ loading: false });
+        });
+    }
+  }
+
   handleChange(value) {
     this.setState({ quantity: value });
   }
@@ -166,7 +179,7 @@ class todayMenuScreen extends Component {
         >
           <Modal.Header>Số lượng của sản phẩm ?</Modal.Header>
           <Modal.Content>
-            <Label>Hãy nhập số lượng</Label>
+            <Label pointing="below">Hãy nhập số lượng</Label>
             <Input
               type="number"
               placeholder="Số lượng ..."
@@ -244,17 +257,16 @@ class todayMenuScreen extends Component {
                               <Grid.Row centered key={index}>
                                 <Header as="h4" image>
                                   <Header.Content>
-                                    {user.name}
-                                    <Header.Subheader>
-                                      X{user.quantity}
-                                    </Header.Subheader>
+                                    {user.name} x {user.quantity}
                                   </Header.Content>
                                 </Header>
                               </Grid.Row>
                             ))}
                         </Grid>
                       </Table.Cell>
-                      <Table.Cell>{food.totalQuantity}</Table.Cell>
+                      <Table.Cell textAlign="center">
+                        = {food.totalQuantity}
+                      </Table.Cell>
                     </Table.Row>
                   ))}
               </Table.Body>
@@ -272,19 +284,31 @@ class todayMenuScreen extends Component {
 
         <Grid>
           <Grid.Row>
-          <Link to="/">
-            <Button icon style={{ float: "left" }}>
-              <Icon name="arrow left" /> 
-            </Button>
-          </Link>
+            <Grid.Column width={8}>
+              <Link to="/">
+                <Button icon style={{ float: "left" }}>
+                  <Icon name="arrow left" />
+                </Button>
+              </Link>
+            </Grid.Column>
           </Grid.Row>
           {(this.state.transactions &&
             this.state.transactions.length > 0 &&
             this.state.transactions.map((transaction, index) => (
               <Grid.Row centered key={index}>
                 <Segment>
+                  <Button
+                    color="red"
+                    attached="top"
+                    onClick={() => this.deleteTransaction(transaction)}
+                  >
+                    Xóa
+                  </Button>
                   <Card
-                    image="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                    image={
+                      transaction.data.menu.logo ||
+                      "https://cdn.dribbble.com/users/1012566/screenshots/4187820/topic-2.jpg"
+                    }
                     header={transaction.data.menu.name}
                     meta="Quán ăn"
                     description={transaction.data.assignTime}
@@ -304,25 +328,29 @@ class todayMenuScreen extends Component {
                           />
                           <Feed.Content>
                             <Feed.Summary>
-                              <Feed.User>{food.name}</Feed.User> {food.price} đ
+                              <Feed.User
+                                onClick={() =>
+                                  this.showQuantity(food, transaction)
+                                }
+                              >
+                                {food.name}
+                              </Feed.User>{" "}
+                              {food.price} đ
                             </Feed.Summary>
 
                             <Feed.Meta>
                               <Popup
                                 trigger={
                                   <Feed.Like style={{ fontSize: 15 }}>
-                                    <Icon
-                                      name="sticky note"
-                                      onClick={() =>
-                                        this.showQuantity(food, transaction)
-                                      }
-                                    />{" "}
-                                    Có {(food.users && food.users.length) || 0}{" "}
+                                    <Icon name="sticky note" /> Có{" "}
+                                    {(food.users && food.users.length) || 0}{" "}
                                     người đặt
                                   </Feed.Like>
                                 }
                               >
-                                <Popup.Header>Món được ai đặt ?</Popup.Header>
+                                <Popup.Header>
+                                  Món đã được ai đặt ?
+                                </Popup.Header>
                                 <Popup.Content>
                                   <List>
                                     {(food.users &&
@@ -363,7 +391,7 @@ class todayMenuScreen extends Component {
               <Grid.Row centered>
                 <Segment loading style={{ height: 650, width: 320 }}>
                   <Placeholder>
-                    <Placeholder.Image square/>
+                    <Placeholder.Image square />
 
                     <Placeholder.Paragraph>
                       <Placeholder.Line />
@@ -389,14 +417,12 @@ class todayMenuScreen extends Component {
                       <Placeholder.Line />
                       <Placeholder.Line />
                     </Placeholder.Paragraph>
-
-                    
                   </Placeholder>
                 </Segment>
               </Grid.Row>
             )) || (
               <Grid.Row centered>
-                <h3>Hôm nay chửa có thực đơn -.-</h3>
+                <Header as="h1" icon="calendar alternate outline" color="grey" content="Hôm nay chửa có thực đơn" />{" "}
               </Grid.Row>
             ))}
         </Grid>

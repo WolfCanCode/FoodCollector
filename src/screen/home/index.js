@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Container,Button} from "semantic-ui-react";
+import { Container, Button, Grid, Icon } from "semantic-ui-react";
 import firebase from "./../../utils/firebase";
 import { Link } from "react-router-dom";
 
@@ -75,13 +75,24 @@ class homePageScreen extends Component {
 
   render() {
     return (
-      <Container style={{marginTop:50}}>
-        <Link to="/menus">
-          <Button color="orange">MENUS</Button>
-        </Link>
-        <Link to="/menu/today">
-          <Button color="blue">TODAY</Button>
-        </Link>
+      <Container >
+        <Grid>
+          <Grid.Row  style={{ minWidth: "100vw" }}>
+            <Grid.Column width={8}>
+                <Button disabled icon style={{ float: "left" }}>
+                  <Icon name="arrow left" />
+                </Button>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row centered>
+            <Link to="/menus">
+              <Button color="orange">MENUS</Button>
+            </Link>
+            <Link to="/menu/today">
+              <Button color="blue">TODAY</Button>
+            </Link>
+          </Grid.Row>
+        </Grid>
       </Container>
     );
   }

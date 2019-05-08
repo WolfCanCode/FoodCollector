@@ -3,10 +3,10 @@ import "./App.css";
 import { createBrowserHistory } from "history";
 import { Router, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
-import { Header} from "semantic-ui-react";
+import { Image } from "semantic-ui-react";
 import { Button, Container, Grid, Modal, Input } from "semantic-ui-react";
 import { reactLocalStorage } from "reactjs-localstorage";
-
+import { Link } from "react-router-dom";
 import homePageScreen from "./screen/home";
 import menuScreen from "./screen/menu/index";
 import menuDetailScreen from "./screen/menu/details";
@@ -24,7 +24,8 @@ class App extends Component {
       users: [],
       user: "",
       hasReg:
-        !this.props.globalStage.user || !reactLocalStorage.get("name_o2" || true)
+        !this.props.globalStage.user ||
+        !reactLocalStorage.get("name_o2" || true)
     };
     console.log(reactLocalStorage.get("name_o2"));
   }
@@ -78,7 +79,7 @@ class App extends Component {
     return (
       <Router history={hist}>
         <Container>
-          <Modal  size="mini" dimmer={true} open={this.state.hasReg}>
+          <Modal size="mini" dimmer={true} open={this.state.hasReg}>
             <Modal.Header>Make sure who are you ?</Modal.Header>
             <Modal.Content>
               <Input
@@ -107,9 +108,12 @@ class App extends Component {
           </Modal>
           <Grid>
             <Grid.Row centered>
-              <Header as="h1" icon style={{marginTop:30, color:'white',position:'fixed'}}>
-                <Header.Content>Food Collector</Header.Content>
-              </Header>
+              <Link to={"/"}>
+                <Image
+                  size="small"
+                  src={require("./assets/with-text-white.png")}
+                />
+              </Link>
             </Grid.Row>
             <Grid.Row centered>
               <Switch>
@@ -120,7 +124,6 @@ class App extends Component {
                 <Route path={"/"} component={homePageScreen} />
               </Switch>
             </Grid.Row>
-
           </Grid>
         </Container>
       </Router>
