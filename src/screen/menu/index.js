@@ -78,7 +78,7 @@ class menuScreen extends Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <Table unstackable selectable key={"black"} inverted color={"black"} style={{width:'95vw'}}>
+        <Table unstackable selectable key={"black"} inverted color={"black"}>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell colSpan={6} textAlign="center">
