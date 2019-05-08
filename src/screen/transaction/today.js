@@ -270,12 +270,14 @@ class todayMenuScreen extends Component {
           </Modal.Actions>
         </Modal>
 
-        <Grid>
+        <Grid  style={{width:'95vw'}}>
+          <Grid.Row>
           <Link to="/">
-            <Button icon labelPosition="left" style={{ float: "left" }}>
-              <Icon name="arrow left" /> TRỞ VỀ
+            <Button icon style={{ float: "left" }}>
+              <Icon name="arrow left" /> 
             </Button>
           </Link>
+          </Grid.Row>
           {(this.state.transactions &&
             this.state.transactions.length > 0 &&
             this.state.transactions.map((transaction, index) => (
@@ -359,7 +361,7 @@ class todayMenuScreen extends Component {
             ))) ||
             ((this.state.loading && (
               <Grid.Row centered>
-                <Segment loading style={{ height: 650, width: 300 }}>
+                <Segment loading style={{ height: 650, width: 320 }}>
                   <Placeholder>
                     <Placeholder.Image square/>
 
@@ -394,7 +396,7 @@ class todayMenuScreen extends Component {
               </Grid.Row>
             )) || (
               <Grid.Row centered>
-                <h3>Hôm nay chửa có thực đơn -.- hoặc do đang tải :-o </h3>
+                <h3>Hôm nay chửa có thực đơn -.-</h3>
               </Grid.Row>
             ))}
         </Grid>

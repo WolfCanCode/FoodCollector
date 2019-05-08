@@ -3,7 +3,7 @@ import "./App.css";
 import { createBrowserHistory } from "history";
 import { Router, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
-import { Header, Icon } from "semantic-ui-react";
+import { Header} from "semantic-ui-react";
 import { Button, Container, Grid, Modal, Input } from "semantic-ui-react";
 import { reactLocalStorage } from "reactjs-localstorage";
 
@@ -107,9 +107,8 @@ class App extends Component {
           </Modal>
           <Grid>
             <Grid.Row centered>
-              <Header as="h2" icon>
-                <Icon name="food" circular />
-                <Header.Content>O2Food Collector</Header.Content>
+              <Header as="h1" icon style={{marginTop:30, color:'white',position:'fixed'}}>
+                <Header.Content>Food Collector</Header.Content>
               </Header>
             </Grid.Row>
             <Grid.Row centered>

@@ -75,7 +75,7 @@ class homePageScreen extends Component {
 
   render() {
     return (
-      <Container>
+      <Container style={{marginTop:50}}>
         <Link to="/menus">
           <Button color="orange">MENUS</Button>
         </Link>

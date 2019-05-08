@@ -59,38 +59,38 @@ class menuScreen extends Component {
 
   render() {
     return (
-      <Container>
+      <Container >
         <Grid>
           <Grid.Row>
             <Grid.Column width={8}>
               <Link to="/">
-                <Button icon labelPosition="left" style={{ float: "left" }}>
-                  <Icon name="arrow left" /> TRỞ VỀ
+                <Button icon style={{ float: "left" }}>
+                  <Icon name="arrow left" />
                 </Button>
               </Link>
             </Grid.Column>
             <Grid.Column width={8} textAlign="right">
               <Link to="/menu/add">
-                <Button color="green" icon labelPosition="right">
-                  <Icon name="plus" /> THÊM
+                <Button color="green" icon >
+                  <Icon name="plus" />
                 </Button>
               </Link>
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <Table unstackable>
+        <Table unstackable selectable key={"black"} inverted color={"black"} style={{width:'95vw'}}>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell width={4} />
-              <Table.HeaderCell width={4} textAlign="center">
+              <Table.HeaderCell colSpan={6} textAlign="center">
                 Danh sách MENU
               </Table.HeaderCell>
-              <Table.HeaderCell width={4} />
             </Table.Row>
             <Table.Row>
               <Table.HeaderCell>Tên</Table.HeaderCell>
               <Table.HeaderCell>Địa chỉ</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">Hành động</Table.HeaderCell>
+              <Table.HeaderCell colSpan={3} textAlign="right">
+                Hành động
+              </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -99,27 +99,34 @@ class menuScreen extends Component {
               this.state.menuList.length > 0 &&
               this.state.menuList.map((menu, index) => (
                 <Table.Row key={index}>
-                  <Table.Cell>{menu.data.name}</Table.Cell>
-                  <Table.Cell>{menu.data.address}</Table.Cell>
-                  <Table.Cell textAlign="right">
+                  <Table.Cell width={6}>{menu.data.name}</Table.Cell>
+                  <Table.Cell width={12}>{menu.data.address}</Table.Cell>
+                  <Table.Cell textAlign="right" width={1}>
                     <Button
                       color="yellow"
                       onClick={() => this.assignMenu(menu)}
                       loading={this.state.loading}
+                      icon
                     >
-                      Đẩy lên
+                      <Icon name="arrow up" />
                     </Button>
+                  </Table.Cell>
+                  <Table.Cell textAlign="right" width={1}>
                     <Link to={`/menu/${menu.id}`}>
-                      <Button color="green">Sửa</Button>
+                      <Button color="green" icon>
+                        <Icon name="edit" />
+                      </Button>
                     </Link>
-                    <Button color="red">Xóa</Button>
+                  </Table.Cell>
+                  <Table.Cell textAlign="right" width={1}>
+                    <Button color="red" icon>
+                      <Icon name="delete" />
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
               ))) || (
               <Table.Row>
-                <Table.Cell width={4}>Danh sách rỗng</Table.Cell>
-                <Table.HeaderCell width={4} />
-                <Table.HeaderCell width={4} />
+                <Table.Cell colSpan={3}>Danh sách rỗng</Table.Cell>
               </Table.Row>
             )}
           </Table.Body>
