@@ -122,12 +122,12 @@ class menuDetailScreen extends Component {
   render() {
     return (
       <Container>
-        <Segment style={{overflowY:'scroll', maxHeight:'85vh', background:'rgba(0,0,0,0.3)'}}>
         <Grid> 
           <Grid.Row style={{ minWidth: "100vw" }}>
             <Grid.Column width={8}>
               <Link to="/menus">
-                <Button icon style={{ float: "left" }}>
+                <Button icon labelPosition="lèft" style={{ float: "left" }}>
+                Trở về
                   <Icon name="arrow left" />
                 </Button>
               </Link>
@@ -141,11 +141,9 @@ class menuDetailScreen extends Component {
                   <Grid.Column width={8}>
                     <Segment
                       raised
-                      inverted
-                      color="orange"
                       loading={this.state.loading}
                     >
-                      <Form inverted>
+                      <Form >
                         <Form.Field>
                           <label>Tên Menu</label>
                           <input
@@ -202,11 +200,9 @@ class menuDetailScreen extends Component {
                   <Grid.Column width={8}>
                     <Segment
                       raised
-                      inverted
-                      color="orange"
                       loading={this.state.loading}
                     >
-                      <Form inverted>
+                      <Form >
                         <Form.Group widths="equal">
                           <Form.Field>
                             <label>Tên món ăn</label>
@@ -271,7 +267,7 @@ class menuDetailScreen extends Component {
                         <Grid.Row centered>Danh sách món ăn</Grid.Row>
                         <Grid.Row
                           centered
-                          style={{ overflowY: "scroll", maxHeight: 500 }}
+                          style={{ overflowY: "scroll", maxHeight: 400 }}
                         >
                           <Segment raised>
                             <List
@@ -300,8 +296,8 @@ class menuDetailScreen extends Component {
                                       name="food"
                                       size="large"
                                       verticalAlign="middle"
-                                      color="orange"
                                     />
+                                    
                                     <List.Content>
                                       <List.Header
                                         as="a"
@@ -329,7 +325,6 @@ class menuDetailScreen extends Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        </Segment>
       </Container>
     );
   }

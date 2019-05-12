@@ -23,6 +23,7 @@ import menuScreen from "./screen/menu/index";
 import menuDetailScreen from "./screen/menu/details";
 import todayTransactionScreen from "./screen/transaction/today";
 import pastTransactionScreen from "./screen/transaction/past";
+import _ from "underscore";
 import firebase from "./utils/firebase";
 import { setUser } from "./actions/user";
 const db = firebase.firestore();
@@ -57,8 +58,12 @@ class MobileContainer extends Component {
           onHide={this.handleSidebarHide}
           vertical
           inverted
+          style={{ paddingTop: 1 }}
           visible={sidebarOpened}
         >
+          <Menu.Item>
+            <Image size="small" src={require("./assets/with-text-white.png")} />
+          </Menu.Item>
           <Menu.Item as={Link} to="/menus">
             Thực đơn
           </Menu.Item>
@@ -66,7 +71,7 @@ class MobileContainer extends Component {
             Hôm nay
           </Menu.Item>
           <Menu.Item as={Link} to="/menu/past">
-            Cũ
+            Lịch sử
           </Menu.Item>
         </Sidebar>
 
@@ -77,7 +82,8 @@ class MobileContainer extends Component {
               minHeight: 350,
               padding: "1em 0em",
               overflowY: "scroll",
-              maxHeight: "95vh"
+              maxHeight: "95vh",
+              paddingTop: 1
             }}
             vertical
           >
@@ -86,16 +92,19 @@ class MobileContainer extends Component {
                 pointing
                 secondary
                 size="large"
-                style={{boxShadow:'0 5px 20px rgba(0,0,0,0.2)',position:'fixed',width:'92vw',background:'#F5F5F5',zIndex:99}}
+                style={{
+                  boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
+                  position: "fixed",
+                  width: "92vw",
+                  background: "#F5F5F5",
+                  zIndex: 99
+                }}
               >
                 {/* <Menu.Item onClick={this.handleToggle}>
                   <Icon name="sidebar" inverted />
                 </Menu.Item> */}
                 <Menu.Item onClick={this.handleToggle}>
-                  <Image
-                    size="small"
-                    src={require("./assets/with-text.png")}
-                  />
+                  <Image size="small" src={require("./assets/with-text.png")} />
                 </Menu.Item>
               </Menu>
               {/* <Menu pointing secondary size="large">
@@ -119,10 +128,27 @@ class MobileContainer extends Component {
 }
 
 class DesktopContainer extends Component {
-  state = {active: 'today'};
+  state = { active: "today" };
 
   hideFixedMenu = () => this.setState({ fixed: false });
   showFixedMenu = () => this.setState({ fixed: true });
+
+  componentDidMount() {
+    let active = "today";
+    console.log(this.props.history);
+    if (_.contains(this.props.history.location.pathname.split("/"), "today")) {
+    }
+    if (_.contains(this.props.history.location.pathname.split("/"), "past")) {
+      active = "past";
+    }
+    if (
+      _.contains(this.props.history.location.pathname.split("/"), "menu") ||
+      _.contains(this.props.history.location.pathname.split("/"), "menus")
+    ) {
+      active = "menus";
+    }
+    this.setState({ active: active });
+  }
 
   render() {
     const { fixed } = this.state;
@@ -142,29 +168,50 @@ class DesktopContainer extends Component {
           onBottomPassed={this.showFixedMenu}
           onBottomPassedReverse={this.hideFixedMenu}
         >
-          <Segment textAlign="center" vertical>
+          <Segment textAlign="center" vertical style={{ paddingTop: "1px" }}>
             <Menu
               fixed={fixed ? "top" : null}
               pointing={!fixed}
               secondary={!fixed}
               size="large"
-              style={{boxShadow:'0 5px 20px rgba(0,0,0,0.2)',position:'fixed',width:'100%',background:'#F5F5F5',zIndex:99}}
+              style={{
+                boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
+                position: "fixed",
+                width: "100%",
+                background: "#F5F5F5",
+                zIndex: 99
+              }}
             >
               <Container>
                 <Menu.Item as={Link} to={"/"} style={style.menu}>
-                <Image
-                    size="small"
-                    src={require("./assets/with-text.png")}
-                  />
+                  <Image size="small" src={require("./assets/with-text.png")} />
                 </Menu.Item>
-                <Menu.Item as={Link} to="/menus" style={style.menu} onClick={()=>this.setState({active:"menus"})} active={this.state.active ==="menus"}>
+                <Menu.Item
+                  as={Link}
+                  to="/menus"
+                  style={style.menu}
+                  onClick={() => this.setState({ active: "menus" })}
+                  active={this.state.active === "menus"}
+                >
                   Thực đơn
                 </Menu.Item>
 
-                <Menu.Item as={Link} to="/menu/past" style={style.menu} onClick={()=>this.setState({active:"past"})} active={this.state.active ==="past"}>
-                  Cũ
+                <Menu.Item
+                  as={Link}
+                  to="/menu/past"
+                  style={style.menu}
+                  onClick={() => this.setState({ active: "past" })}
+                  active={this.state.active === "past"}
+                >
+                  Lịch sử
                 </Menu.Item>
-                <Menu.Item as={Link} to="/" style={style.menu} onClick={()=>this.setState({active:"today"})} active={this.state.active ==="today"}>
+                <Menu.Item
+                  as={Link}
+                  to="/"
+                  style={style.menu}
+                  onClick={() => this.setState({ active: "today" })}
+                  active={this.state.active === "today"}
+                >
                   Hôm nay
                 </Menu.Item>
               </Container>
@@ -238,7 +285,7 @@ class App extends Component {
 
   render() {
     const body = (
-      <Container style={{marginTop:140}}>
+      <Container style={{ marginTop: 140 }}>
         <Modal size="mini" dimmer={true} open={this.state.hasReg}>
           <Modal.Header>Make sure who are you ?</Modal.Header>
           <Modal.Content>
