@@ -78,7 +78,7 @@ class menuScreen extends Component {
             <Table
               unstackable
               selectable
-              style={{ width: "98vw" }}
+              style={{ width: "96vw" }}
             >
               <Table.Header>
                 <Table.Row>

@@ -86,7 +86,7 @@ class MobileContainer extends Component {
                 pointing
                 secondary
                 size="large"
-                style={{boxShadow:'0 5px 20px rgba(0,0,0,0.2)',position:'fixed',width:'100%',background:'#F5F5F5',zIndex:99}}
+                style={{boxShadow:'0 5px 20px rgba(0,0,0,0.2)',position:'fixed',width:'92vw',background:'#F5F5F5',zIndex:99}}
               >
                 {/* <Menu.Item onClick={this.handleToggle}>
                   <Icon name="sidebar" inverted />
