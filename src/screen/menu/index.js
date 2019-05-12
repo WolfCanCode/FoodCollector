@@ -54,7 +54,7 @@ class menuScreen extends Component {
       .add(transaction)
       .then(() => {
         this.setState({ loading: false });
-        this.props.history.push("/menu/today");
+        this.props.history.push("/");
       });
   }
 
@@ -75,34 +75,22 @@ class menuScreen extends Component {
       <Container style={{ width: "100vw" }}>
         <Grid>
           <Grid.Row>
-            <Grid.Column width={8}>
-              <Link to="/">
-                <Button icon style={{ float: "left" }}>
-                  <Icon name="arrow left" />
-                </Button>
-              </Link>
-            </Grid.Column>
-            <Grid.Column width={8} textAlign="right">
-              <Link to="/menu/add">
-                <Button color="green" icon>
-                  <Icon name="plus" />
-                </Button>
-              </Link>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
             <Table
               unstackable
               selectable
-              key={"orange"}
-              inverted
-              color={"orange"}
-              style={{ width: "100vw" }}
+              style={{ width: "98vw" }}
             >
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell colSpan={6} textAlign="center">
+                  <Table.HeaderCell colSpan={2} textAlign="center">
                     Danh sách MENU
+                  </Table.HeaderCell>
+                  <Table.HeaderCell colSpan={3} textAlign="right">
+                    <Link to="/menu/add">
+                      <Button color="green" icon>
+                        <Icon name="plus" />
+                      </Button>
+                    </Link>
                   </Table.HeaderCell>
                 </Table.Row>
                 <Table.Row>

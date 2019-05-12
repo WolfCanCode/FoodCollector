@@ -18,13 +18,12 @@ import {
   Header,
   Placeholder
 } from "semantic-ui-react";
-import { Link } from "react-router-dom";
 import _ from "underscore";
 
 const db = firebase.firestore();
 
 const mapStateToProps = state => ({ globalStage: state });
-class todayMenuScreen extends Component {
+class todayTransactionScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -283,15 +282,6 @@ class todayMenuScreen extends Component {
         </Modal>
 
         <Grid>
-          <Grid.Row>
-            <Grid.Column width={8}>
-              <Link to="/">
-                <Button icon style={{ float: "left" }}>
-                  <Icon name="arrow left" />
-                </Button>
-              </Link>
-            </Grid.Column>
-          </Grid.Row>
           {(this.state.transactions &&
             this.state.transactions.length > 0 &&
             this.state.transactions.map((transaction, index) => (
@@ -315,7 +305,7 @@ class todayMenuScreen extends Component {
                   />
                   <Feed
                     size="large"
-                    style={{ overflowY: "scroll", maxHeight: 350 }}
+                    style={{ overflowY: "scroll", maxHeight: 350,boxShadow:'0px 0px 20px inset rgba(0,0,0,0.15)',padding:5 }}
                   >
                     {transaction.data.menu &&
                       transaction.data.menu.foods &&
@@ -422,7 +412,12 @@ class todayMenuScreen extends Component {
               </Grid.Row>
             )) || (
               <Grid.Row centered>
-                <Header as="h2" icon="calendar alternate outline" style={{color:'white'}} content="Hôm nay chửa có thực đơn" />{" "}
+                <Segment placeholder>
+                  <Header icon>
+                    <Icon name="calendar alternate outline" />
+                    Hôm nay chửa có thực đơn{" "}
+                  </Header>
+                </Segment>
               </Grid.Row>
             ))}
         </Grid>
@@ -431,4 +426,4 @@ class todayMenuScreen extends Component {
   }
 }
 
-export default connect(mapStateToProps)(todayMenuScreen);
+export default connect(mapStateToProps)(todayTransactionScreen);

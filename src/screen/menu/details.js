@@ -47,6 +47,7 @@ class menuDetailScreen extends Component {
       .get()
       .then(doc => {
         let menu = doc.data();
+        console.log("menu",doc);
         this.setState({
           name: menu.name,
           address: menu.address,
@@ -121,7 +122,8 @@ class menuDetailScreen extends Component {
   render() {
     return (
       <Container>
-        <Grid>
+        <Segment style={{overflowY:'scroll', maxHeight:'85vh', background:'rgba(0,0,0,0.3)'}}>
+        <Grid> 
           <Grid.Row style={{ minWidth: "100vw" }}>
             <Grid.Column width={8}>
               <Link to="/menus">
@@ -132,6 +134,7 @@ class menuDetailScreen extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
+
             <Grid.Column>
               <Grid doubling columns={2}>
                 <Grid.Row textAlign="left">
@@ -326,6 +329,7 @@ class menuDetailScreen extends Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
+        </Segment>
       </Container>
     );
   }
