@@ -26,7 +26,8 @@ class menuDetailScreen extends Component {
       foods: [],
       loading: false,
       foodName: "",
-      foodPrice: 0
+      foodPrice: 0,
+      logo: ""
     };
   }
 
@@ -47,7 +48,6 @@ class menuDetailScreen extends Component {
       .get()
       .then(doc => {
         let menu = doc.data();
-        console.log("menu",doc);
         this.setState({
           name: menu.name,
           address: menu.address,
@@ -58,60 +58,52 @@ class menuDetailScreen extends Component {
       });
   }
 
-  //   deleteUser(user) {
-  //     db.collection("users")
-  //       .doc(user.id)
-  //       .delete()
-  //       .then(() => {
-  //         console.log("Xóa thành công user ", user.data.name);
-  //         this.getUser();
-  //       });
-  //   }
-
   addMenu = e => {
-    this.setState({ loading: true });
-    let menu = {
-      name: this.state.name,
-      address: this.state.address,
-      foods: this.state.foods,
-      logo: this.state.logo
-    };
-    if (this.props.match.params.id) {
-      db.collection("menus")
-        .doc(this.props.match.params.id)
-        .set(menu)
-        .then(() => {
-          console.log(menu.name, " has been set.");
-          this.props.history.push("/menus");
-          this.setState({ loading: false });
+    if (this.state.name && this.state.foods.length>0) {
+      this.setState({ loading: true });
+      let menu = {
+        name: this.state.name,
+        address: this.state.address,
+        foods: this.state.foods,
+        logo: this.state.logo
+      };
+      if (this.props.match.params.id) {
+        db.collection("menus")
+          .doc(this.props.match.params.id)
+          .set(menu)
+          .then(() => {
+            this.props.history.push("/menus");
+            this.setState({ loading: false });
+          });
+      } else {
+        db.collection("menus")
+          .add(menu)
+          .then(() => {
+            this.props.history.push("/menus");
+            this.setState({ loading: false });
+          });
+        this.setState({
+          name: "",
+          address: "",
+          foods: []
         });
+      }
     } else {
-      db.collection("menus")
-        .add(menu)
-        .then(() => {
-          console.log(menu.name, " has been added.");
-          this.props.history.push("/menus");
-          this.setState({ loading: false });
-        });
-      this.setState({
-        name: "",
-        address: "",
-        foods: []
-      });
+      alert("Phải nhập tên menu với đầy đủ thông tin món ăn chứ má !!!");
     }
+
     e.preventDefault();
   };
 
-  addDefaultSrc(e){
-    e.target.src = 'https://cdn.dribbble.com/users/1012566/screenshots/4187820/topic-2.jpg';
+  addDefaultSrc(e) {
+    e.target.src =
+      "https://cdn.dribbble.com/users/1012566/screenshots/4187820/topic-2.jpg";
   }
 
   deleteFood = food => {
     {
-      console.log("food: ", food);
       let foods = this.state.foods;
       let pos = foods.indexOf(food);
-      console.log(pos);
       foods.splice(pos, 1);
       this.setState({
         foods: foods
@@ -122,35 +114,32 @@ class menuDetailScreen extends Component {
   render() {
     return (
       <Container>
-        <Grid> 
-          <Grid.Row style={{ minWidth: "100vw" }}>
+        <Grid>
+          <Grid.Row >
             <Grid.Column width={8}>
               <Link to="/menus">
-                <Button icon labelPosition="lèft" style={{ float: "left" }}>
-                Trở về
+                <Button icon labelPosition="left" style={{ float: "left" }}>
+                  Trở về
                   <Icon name="arrow left" />
                 </Button>
               </Link>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-
             <Grid.Column>
               <Grid doubling columns={2}>
                 <Grid.Row textAlign="left">
                   <Grid.Column width={8}>
-                    <Segment
-                      raised
-                      loading={this.state.loading}
-                    >
-                      <Form >
+                    <Segment raised loading={this.state.loading}>
+                      <Form>
                         <Form.Field>
-                          <label>Tên Menu</label>
+                          <label>Tên Menu *</label>
                           <input
                             placeholder="Tên menu..."
                             onChange={e =>
                               this.handleChange({ name: e.target.value })
                             }
+                            required
                             value={this.state.name}
                             disabled={this.state.loading}
                           />
@@ -198,11 +187,8 @@ class menuDetailScreen extends Component {
                     </Segment>
                   </Grid.Column>
                   <Grid.Column width={8}>
-                    <Segment
-                      raised
-                      loading={this.state.loading}
-                    >
-                      <Form >
+                    <Segment raised loading={this.state.loading}>
+                      <Form>
                         <Form.Group widths="equal">
                           <Form.Field>
                             <label>Tên món ăn</label>
@@ -244,7 +230,6 @@ class menuDetailScreen extends Component {
                                     name: this.state.foodName,
                                     price: parseInt(this.state.foodPrice)
                                   });
-                                  console.log(foods);
                                   this.setState({
                                     foods: foods,
                                     foodName: "",
@@ -297,7 +282,7 @@ class menuDetailScreen extends Component {
                                       size="large"
                                       verticalAlign="middle"
                                     />
-                                    
+
                                     <List.Content>
                                       <List.Header
                                         as="a"

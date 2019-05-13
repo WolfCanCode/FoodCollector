@@ -14,7 +14,8 @@ import {
   Sidebar,
   Menu,
   Segment,
-  Visibility
+  Visibility,
+  Label
 } from "semantic-ui-react";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Link } from "react-router-dom";
@@ -183,7 +184,7 @@ class DesktopContainer extends Component {
               }}
             >
               <Container>
-                <Menu.Item as={Link} to={"/"} style={style.menu}>
+                <Menu.Item  style={style.menu}>
                   <Image size="small" src={require("./assets/with-text.png")} />
                 </Menu.Item>
                 <Menu.Item
@@ -265,33 +266,47 @@ class App extends Component {
   }
 
   pickUser() {
-    db.collection("users")
-      .where("name", "==", this.state.user)
-      .get()
-      .then(collection => {
-        if (collection.docs.length > 0) {
-          this.props.dispatch(setUser(collection.docs[0].data()));
-          this.setState({ hasReg: false });
-        } else {
-          db.collection("users")
-            .add({ name: this.state.user })
-            .then(() => {
-              this.props.dispatch(setUser({ name: this.state.user }));
-              this.setState({ hasReg: false });
-            });
-        }
-      });
+    if (this.state.user) {
+      db.collection("users")
+        .where("name", "==", this.state.user)
+        .get()
+        .then(collection => {
+          if (collection.docs.length > 0) {
+            this.props.dispatch(setUser(collection.docs[0].data()));
+            this.setState({ hasReg: false });
+          } else {
+            let sure = window.confirm(
+              "Tên của bạn là "+
+              this.state.user+
+              ", bạn chắc chứ ?"
+            );
+            if (sure) {
+              db.collection("users")
+                .add({ name: this.state.user })
+                .then(() => {
+                  this.props.dispatch(setUser({ name: this.state.user }));
+                  this.setState({ hasReg: false });
+                });
+            } else {
+
+            }
+          }
+        });
+    } else {
+      alert("Bạn có chắc là đã điền rồi không ?");
+    }
   }
 
   render() {
     const body = (
       <Container style={{ marginTop: 140 }}>
         <Modal size="mini" dimmer={true} open={this.state.hasReg}>
-          <Modal.Header>Make sure who are you ?</Modal.Header>
+          <Modal.Header>Tôi muốn chắc rằng bạn là ai ?</Modal.Header>
           <Modal.Content>
+            <Label>Tên của bạn</Label>
             <Input
               list="users"
-              placeholder="You are ..."
+              placeholder="Bạn là ..."
               value={this.state.user}
               onChange={e => this.handleChange(e.target.value)}
             />
@@ -308,7 +323,7 @@ class App extends Component {
               positive
               icon="checkmark"
               labelPosition="right"
-              content="Yep, that's me"
+              content="Yep, tên tôi đó"
               onClick={() => this.pickUser()}
             />
           </Modal.Actions>
